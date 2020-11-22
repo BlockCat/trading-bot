@@ -10,7 +10,7 @@ from stock_environment.wandb_callback import WandbLogger
 from stock_environment.stock_processor import StockProcessor
 from data_reader import read_daily_data
 
-WINDOW_LENGTH = 20
+WINDOW_LENGTH = 10
 
 
 class BaseAgent:
@@ -19,6 +19,11 @@ class BaseAgent:
 
     def __init__(self, stock: str):
         self.env = gym.make('stockenv-v0', df = read_daily_data(stock))
+        
+        print(self.env)
+        print(self.env.action_space)
+        print(self.env.observation_space)
+
         self.env.seed(123)
         self.stock = stock
 
@@ -36,9 +41,15 @@ class BaseAgent:
         )
 
         processor = StockProcessor(stock)
+        model = self.create_model(30)
+        print("output:", model.output.shape)
+        print("output2:", self.env.action_space.shape)
 
+        print(list(model.output.shape))
+        print(list((None, self.env.action_space.shape)))        
+        
         self.dqn = DQNAgent(
-            model=self.create_model(30),
+            model=model,
             nb_actions=self.env.action_space.n,
             policy=policy,
             memory=memory,
@@ -63,9 +74,9 @@ class BaseAgent:
         callbacks = [ModelIntervalCheckpoint(
             checkpoint_weights_filename, interval=250000)]
         callbacks += [FileLogger(log_filename, interval=100)]
-        callbacks += [WandbLogger(
-            project = "stock-bot-v0"
-        )]
+        # callbacks += [WandbLogger(
+        #     project = "stock-bot-v0"
+        # )]
 
         self.dqn.fit(self.env, callbacks=callbacks,
                      nb_steps=1750000, log_interval=10000)

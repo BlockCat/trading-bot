@@ -7,6 +7,7 @@ from stock_environment.inventory import Inventory, StockEntry
 from dataclasses import dataclass
 
 INITIAL_MONEY = 10000
+SIZE_WINDOW = 20
 
 
 class MarketActions(Enum):
@@ -35,12 +36,14 @@ class StockTradingEnvironment(gym.Env):
 
         self.reset()
 
-        # buy, sell, nothing, amount
-        self.action_space = spaces.Box(low=np.array(
-            [0, 0, 0, 0]), high=np.array([1, 1, 1, float('inf')]), dtype=np.float16)
-
+        # buy, sell, nothing, amount        
+        self.action_space = spaces.Discrete(3)
         self.observation_space = spaces.Box(
-            low=0, high=1, shape=(6, 6), dtype=np.float16)
+            low=0,
+            high=1,
+            shape=(SIZE_WINDOW, 6),
+            dtype=np.float16
+        )
 
     def step(self, action: MarketAction):
         self.steps += 1
@@ -65,15 +68,15 @@ class StockTradingEnvironment(gym.Env):
         return obs, reward, done, {}
 
     def reset(self):
-        self.steps = 0
-        self.reward = 0
+        self.steps = SIZE_WINDOW        
         self.inventory = Inventory()
         self.money = INITIAL_MONEY
 
         return self._next_observation()
 
     def _next_observation(self):
-        return {}
+        return self.df[(self.steps - SIZE_WINDOW): self.steps]
+        
 
     def _reward(self):
         stock_worth = self.df["Close"][self.steps] * len(self.inventory.stocks)

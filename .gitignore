@@ -1,3 +1,4 @@
 data/
 api_config.py
 __pycache__/
+wandb/

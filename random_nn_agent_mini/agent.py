@@ -14,14 +14,11 @@ class Agent(BaseAgent):
         # input_placeholder = tf.keras.backend.placeholder(shape=(None, None, input_size))
         # output_placeholder = tf.keras.backend.placeholder(shape=(None, output_size))
 
-        self.env.action_space
         model = tf.keras.models.Sequential()
+        model.add(tf.keras.layers.Input(shape=self.env.observation_space.shape))
         model.add(tf.keras.layers.Dense(500, activation='relu'))
-        model.add(tf.keras.layers.Flatten())        
-        model.add(tf.keras.layers.Dense(4))
-        model.compile(
-            loss='mse'
-        )
-        model.build(input_shape=(None, None, input_size))
+        model.add(tf.keras.layers.Flatten())
+        model.add(tf.keras.layers.Dense(self.env.action_space.n))
+        model.compile(loss='mse')
         print(model.summary())
         return model

@@ -15,8 +15,7 @@ class Agent(BaseAgent):
         # output_placeholder = tf.keras.backend.placeholder(shape=(None, output_size))
 
         model = tf.keras.models.Sequential()
-        # model.add(tf.keras.layers.Input(shape=(None, input_size)))
-        # model.add(tf.keras.layers.Convolution1D(32, 3))
+        model.add(tf.keras.layers.Input(shape=self.env.observation_space.shape))     
         model.add(tf.keras.layers.Dense(500, activation='relu'))
         model.add(tf.keras.layers.MaxPool1D(2))
         model.add(tf.keras.layers.LSTM(4))
@@ -25,7 +24,6 @@ class Agent(BaseAgent):
         model.add(tf.keras.layers.Dense(self.env.action_space.n))
         model.compile(
             loss='mse'
-        )
-        model.build(input_shape=(None, None, input_size))
+        )        
         print(model.summary())
         return model

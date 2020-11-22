@@ -14,6 +14,7 @@ from keras.callbacks import Callback as KerasCallback, CallbackList as KerasCall
 from keras.utils.generic_utils import Progbar
 from rl.callbacks import Callback
 
+
 class WandbLogger(Callback):
     """ Similar to TrainEpisodeLogger, but sends data to Weights & Biases to be visualized """
 
@@ -24,6 +25,7 @@ class WandbLogger(Callback):
             **kwargs
         }
         wandb.init(**kwargs)
+
         self.episode_start = {}
         self.observations = {}
         self.rewards = {}
@@ -36,9 +38,9 @@ class WandbLogger(Callback):
         self.metrics_names = self.model.metrics_names
         wandb.config.update({
             'params': self.params,
-            'env': self.env.__dict__,
-            'env.env': self.env.env.__dict__,
-            'env.env.spec': self.env.env.spec.__dict__,
+            # 'env': self.env.__dict__,
+            # 'env.env': self.env.env.__dict__,
+            # 'env.env.spec': self.env.env.spec.__dict__,
             'agent': self.model.__dict__
         })
 

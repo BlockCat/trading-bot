@@ -30,4 +30,5 @@ tickers = [
 wandb.login(key=WANDB)
 
 agent1 = Agent("EA")
+print(agent1.env.df)
 agent1.train()
